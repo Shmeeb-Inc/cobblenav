@@ -2,7 +2,6 @@ package com.metacontent.cobblenav.client.gui.overlay
 
 import com.cobblemon.mod.common.client.render.drawScaledText
 import com.cobblemon.mod.common.util.math.fromEulerXYZDegrees
-import com.metacontent.cobblenav.CobblenavItems
 import com.metacontent.cobblenav.client.CobblenavClient
 import com.metacontent.cobblenav.client.gui.util.pushAndPop
 import net.minecraft.client.DeltaTracker
@@ -22,7 +21,9 @@ import kotlin.math.sqrt
 class TrackArrowOverlay : Gui(Minecraft.getInstance()) {
     private val minecraft = Minecraft.getInstance()
     private val offset = CobblenavClient.config.trackArrowYOffset
-    private val stack by lazy { ItemStack(CobblenavItems.TRACK_ARROW) }
+    // Apex fork: must not touch CobblenavItems (constructing its unregistered items
+    // creates intrusive registry holders, which throws after the registry freezes).
+    private val stack by lazy { ItemStack.EMPTY }
     var tracking = false
     var entityId = -1
         set(value) {

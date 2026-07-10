@@ -44,6 +44,12 @@ one gate in the packet funnel, and additive files marked "Apex fork"), so
 merges should be near-automatic. After merging, check:
 
 - `CobblenavFabric.registerItems` / `injectLootTables` are still no-ops
+- **nothing class-initializes `CobblenavItems`** (grep for references). Its
+  static init constructs `Item` objects, and since 1.20.5 an `Item` constructor
+  creates an intrusive registry holder — that throws once the item registry is
+  frozen, and the fork never registers the items. This is why
+  `ModelBakeryMixin.injectInit` is empty and `TrackArrowOverlay` uses
+  `ItemStack.EMPTY`.
 - new clientbound send sites (grep `sendToPlayer`) either go through
   `CobblenavNetworkPacket` or are gated manually
 - new data files under `data/cobblenav/recipe|loot_table|tags` referencing the

@@ -16,9 +16,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class PokeRodItemMixin {
     @Inject(method = "use", at = @At("HEAD"), cancellable = true)
     protected void injectUse(Level world, Player user, InteractionHand hand, CallbackInfoReturnable<InteractionResultHolder<ItemStack>> cir) {
-        if (user.getOffhandItem().is(CobblenavItems.INSTANCE.getFISHINGNAV()) && user.isShiftKeyDown()) {
-            cir.setReturnValue(InteractionResultHolder.pass(user.getItemInHand(hand)));
-            cir.cancel();
-        }
+        // Apex fork: must not touch CobblenavItems — its static init constructs Item
+        // instances, whose intrusive registry holders throw after the registry freezes.
+        // This ran on every Pokerod use, and the Fishingnav offhand check can never be
+        // true without the item registered, so the injection is a no-op.
     }
 }

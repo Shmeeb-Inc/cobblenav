@@ -21,9 +21,9 @@ public abstract class ModelBakeryMixin {
 
     @Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/resources/model/ModelBakery;loadSpecialItemModelAndDependencies(Lnet/minecraft/client/resources/model/ModelResourceLocation;)V", ordinal = 0))
     private void injectInit(BlockColors blockColors, ProfilerFiller profilerFiller, Map map, Map map2, CallbackInfo ci) {
-        CobblenavItems.INSTANCE.loadSpecialModels(model -> {
-            this.loadSpecialItemModelAndDependencies(ModelResourceLocation.inventory(model));
-            return Unit.INSTANCE;
-        });
+        // Apex fork: must not touch CobblenavItems. Its static init constructs Item
+        // instances, which create intrusive registry holders — illegal after the item
+        // registry freezes (this mixin runs during resource reload), and the fork never
+        // registers the items. The special in-hand/flicker models are unused without them.
     }
 }
