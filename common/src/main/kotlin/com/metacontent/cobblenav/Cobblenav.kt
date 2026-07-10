@@ -23,6 +23,7 @@ import com.metacontent.cobblenav.networking.packet.client.CloseFishingnavPacket
 import com.metacontent.cobblenav.networking.packet.client.EvYieldDataEntry
 import com.metacontent.cobblenav.networking.packet.client.EvYieldSyncPacket
 import com.metacontent.cobblenav.networking.packet.client.LabelSyncPacket
+import com.metacontent.cobblenav.networking.packet.client.OpenPokenavPacket
 import com.metacontent.cobblenav.properties.BucketSpeciesFeatureProvider
 import com.metacontent.cobblenav.properties.SpawnDetailIdPropertyType
 import com.metacontent.cobblenav.spawndata.PokenavSpawnablePositionResolver
@@ -32,9 +33,11 @@ import com.metacontent.cobblenav.spawndata.resultdata.PokemonHerdSpawnResultData
 import com.metacontent.cobblenav.spawndata.resultdata.PokemonSpawnResultData
 import com.metacontent.cobblenav.spawndata.resultdata.SpawnResultData
 import com.metacontent.cobblenav.spawndata.resultdata.UnknownSpawnResultData
+import com.metacontent.cobblenav.storage.ClientGatedPlayerDataFactory
 import com.metacontent.cobblenav.storage.CobblenavDataStoreTypes
 import com.metacontent.cobblenav.storage.adapter.SpawnDataCatalogueNbtBackend
 import com.metacontent.cobblenav.util.registerDirectly
+import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.npc.VillagerTrades
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -64,10 +67,12 @@ object Cobblenav {
         }
 
         CobblemonEvents.DATA_SYNCHRONIZED.subscribe { player ->
-            if (config.syncLabelsWithClient) {
+            // Apex fork: these extend Cobblemon's DataRegistrySyncPacket and bypass
+            // CobblenavNetworkPacket.sendToPlayer, so they are gated here instead.
+            if (config.syncLabelsWithClient && implementation.canSendToPlayer(player, LabelSyncPacket.ID)) {
                 LabelSyncPacket(PokemonSpecies.species.map { it.resourceIdentifier to it.labels }).sendToPlayer(player)
             }
-            if (config.syncEvYieldWithClient) {
+            if (config.syncEvYieldWithClient && implementation.canSendToPlayer(player, EvYieldSyncPacket.ID)) {
                 EvYieldSyncPacket(PokemonSpecies.species.map(EvYieldDataEntry::fromSpecies)).sendToPlayer(player)
             }
         }
@@ -77,7 +82,9 @@ object Cobblenav {
         PlatformEvents.SERVER_STARTING.subscribe(Priority.LOWEST) { (server) ->
             ConditionCollectors.init()
 
-            val spawnDataNbtFactory = CachedPlayerDataStoreFactory(SpawnDataCatalogueNbtBackend())
+            // Apex fork: Cobblemon syncs every registered data store to every player on
+            // login, and clients without this mod cannot decode the spawn data store.
+            val spawnDataNbtFactory = ClientGatedPlayerDataFactory(CachedPlayerDataStoreFactory(SpawnDataCatalogueNbtBackend()))
             spawnDataNbtFactory.setup(server)
 
             val manager = Cobblemon.playerDataManager
@@ -111,6 +118,10 @@ object Cobblenav {
 
     private fun registerArgumentTypes() {
     }
+
+    // Apex fork: whether this player's client has the mod, inferred from the client
+    // having announced one of our S2C payload channels.
+    fun hasClientMod(player: ServerPlayer) = implementation.canSendToPlayer(player, OpenPokenavPacket.ID)
 
     fun resolveWandererTrades() = listOf(
         VillagerTrades.ItemsForEmeralds(CobblenavItems.WANDERER_POKENAV, 24, 1, 1, 60)

@@ -5,10 +5,15 @@ import com.metacontent.cobblenav.util.ModDependency
 import com.mojang.brigadier.arguments.ArgumentType
 import net.minecraft.commands.synchronization.ArgumentTypeInfo
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.server.level.ServerPlayer
 import kotlin.reflect.KClass
 
 interface Implementation {
     val networkManager: NetworkManager
+
+    // Apex fork: lets server-side code skip clientbound packets for players
+    // whose client does not have this mod installed.
+    fun canSendToPlayer(player: ServerPlayer, packetId: ResourceLocation): Boolean = true
 
     fun registerItems()
 

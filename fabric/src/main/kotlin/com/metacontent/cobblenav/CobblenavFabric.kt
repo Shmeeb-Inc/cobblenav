@@ -5,10 +5,12 @@ import com.mojang.brigadier.arguments.ArgumentType
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.fabricmc.loader.api.FabricLoader
 import net.fabricmc.loader.api.SemanticVersion
 import net.minecraft.commands.synchronization.ArgumentTypeInfo
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.server.level.ServerPlayer
 import kotlin.reflect.KClass
 
 class CobblenavFabric : ModInitializer, Implementation {
@@ -39,6 +41,10 @@ class CobblenavFabric : ModInitializer, Implementation {
 
     // Apex fork: no loot injection since the items are not registered.
     override fun injectLootTables() {
+    }
+
+    override fun canSendToPlayer(player: ServerPlayer, packetId: ResourceLocation): Boolean {
+        return ServerPlayNetworking.canSend(player, packetId)
     }
 
     override fun isModInstalled(mod: ModDependency): Boolean {

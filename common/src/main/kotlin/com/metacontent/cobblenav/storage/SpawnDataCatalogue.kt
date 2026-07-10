@@ -4,6 +4,7 @@ import com.cobblemon.mod.common.Cobblemon
 import com.cobblemon.mod.common.api.storage.player.InstancedPlayerData
 import com.cobblemon.mod.common.net.messages.client.SetClientPlayerDataPacket
 import com.cobblemon.mod.common.util.getPlayer
+import com.metacontent.cobblenav.Cobblenav
 import com.metacontent.cobblenav.storage.client.ClientSpawnDataCatalogue
 import com.metacontent.cobblenav.util.getSpawnDataCatalogue
 import com.mojang.serialization.Codec
@@ -89,6 +90,8 @@ class SpawnDataCatalogue(
 
     private fun onCatalogueUpdated() {
         player?.let {
+            // Apex fork: clients without this mod cannot decode the spawn data store type.
+            if (!Cobblenav.hasClientMod(it)) return@let
             SetClientPlayerDataPacket(
                 type = CobblenavDataStoreTypes.SPAWN_DATA,
                 playerData = toClientData(),
