@@ -2,8 +2,6 @@ package com.metacontent.cobblenav.client.gui.screen
 
 import com.metacontent.cobblenav.client.gui.widget.StatusBarWidget
 import com.metacontent.cobblenav.client.gui.widget.button.IconButton
-import com.metacontent.cobblenav.client.gui.widget.radialmenu.RadialMenuState
-import com.metacontent.cobblenav.client.gui.widget.radialmenu.RadialPopupMenu
 import com.metacontent.cobblenav.os.PokenavOS
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
@@ -17,12 +15,7 @@ class ContactsScreen(
     override val color = Color.decode("#C3BEA6").rgb
 
     override fun initScreen() {
-        RadialPopupMenu(
-            this,
-            screenX + (WIDTH - RadialMenuState.MENU_DIAMETER) / 2,
-            screenY + HEIGHT - HORIZONTAL_BORDER_DEPTH - RadialMenuState.MENU_DIAMETER / 2
-        ).also { addUnblockableWidget(it) }
-
+        // Apex fork: no radial menu — the screen closes with ESC.
         StatusBarWidget(
             screenX + WIDTH - VERTICAL_BORDER_DEPTH - StatusBarWidget.WIDTH - 2,
             screenY + HEIGHT - HORIZONTAL_BORDER_DEPTH - StatusBarWidget.HEIGHT
