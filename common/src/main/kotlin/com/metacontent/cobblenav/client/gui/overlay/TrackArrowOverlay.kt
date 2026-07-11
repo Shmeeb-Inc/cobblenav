@@ -4,13 +4,16 @@ import com.cobblemon.mod.common.client.render.drawScaledText
 import com.cobblemon.mod.common.util.math.fromEulerXYZDegrees
 import com.metacontent.cobblenav.client.CobblenavClient
 import com.metacontent.cobblenav.client.gui.util.pushAndPop
+import com.metacontent.cobblenav.util.cobblenavResource
 import net.minecraft.client.DeltaTracker
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Gui
 import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.resources.model.ModelResourceLocation
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Items
 import org.joml.Quaternionf
 import org.joml.Vector3d
 import org.joml.Vector3f
@@ -23,7 +26,11 @@ class TrackArrowOverlay : Gui(Minecraft.getInstance()) {
     private val offset = CobblenavClient.config.trackArrowYOffset
     // Apex fork: must not touch CobblenavItems (constructing its unregistered items
     // creates intrusive registry holders, which throws after the registry freezes).
-    private val stack by lazy { ItemStack.EMPTY }
+    // The arrow model is baked by ModelBakeryMixin and rendered by location, with a
+    // dummy registered-item stack because ItemRenderer.render ignores empty stacks.
+    private val stack by lazy { ItemStack(Items.STICK) }
+    private val arrowModel
+        get() = minecraft.modelManager.getModel(ModelResourceLocation.inventory(cobblenavResource("track_arrow")))
     var tracking = false
     var entityId = -1
         set(value) {
@@ -62,15 +69,15 @@ class TrackArrowOverlay : Gui(Minecraft.getInstance()) {
                 .rotateX(-pitch),
             scale = Vector3f(30f, 30f, -30f)
         ) {
-            minecraft.itemRenderer.renderStatic(
+            minecraft.itemRenderer.render(
                 stack,
                 ItemDisplayContext.GROUND,
-                255,
-                1000,
+                false,
                 poseStack,
                 guiGraphics.bufferSource(),
-                minecraft.level,
-                0
+                255,
+                1000,
+                arrowModel
             )
         }
 
