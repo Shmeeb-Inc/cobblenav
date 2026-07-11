@@ -8,6 +8,7 @@ import com.metacontent.cobblenav.client.gui.util.pushAndPop
 import com.metacontent.cobblenav.client.gui.widget.button.IconButton
 import com.metacontent.cobblenav.client.gui.widget.stateful.StatefulWidget
 import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.components.Tooltip
 import net.minecraft.network.chat.Component
 import org.joml.Vector3d
 
@@ -46,7 +47,7 @@ class SpawnDataDetailWidget(
         pHeight = CLOSE_HEIGHT,
         action = { displayer.selectedData = null },
         texture = CLOSE
-    )
+    ).also { it.setTooltip(Tooltip.create(Component.translatable("gui.cobblenav.tooltip.close_details"))) }
 
     override var state = initState(ClosedSpawnDataDetail(this, x, y))
 

@@ -28,6 +28,7 @@ import com.metacontent.cobblenav.spawndata.SpawnData
 import com.metacontent.cobblenav.util.WeightedBucket
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.components.Tooltip
 import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
 import net.minecraft.util.FastColor
@@ -124,7 +125,10 @@ class LocationScreen(
             },
             texture = SORT_ASCENDING,
             disabled = true
-        ).also { addBlockableWidget(it) }
+        ).also {
+            it.setTooltip(Tooltip.create(Component.translatable("gui.cobblenav.tooltip.sort")))
+            addBlockableWidget(it)
+        }
 
         refreshButton = IconButton(
             pX = viewX + BucketSelectorWidget.WIDTH + BUTTON_BLOCK_SPACE + BUTTON_WIDTH + BUTTON_SPACE,
@@ -137,7 +141,10 @@ class LocationScreen(
                 requestSpawnData()
             },
             texture = REFRESH
-        ).also { addBlockableWidget(it) }
+        ).also {
+            it.setTooltip(Tooltip.create(Component.translatable("gui.cobblenav.tooltip.refresh")))
+            addBlockableWidget(it)
+        }
 
         RequestLocationScreenInitDataPacket().sendToServer()
 
@@ -180,7 +187,10 @@ class LocationScreen(
                 child.child.spawnData.chanceMultiplier =
                     if (it.checked()) weightedBuckets[currentBucket]?.chance ?: 1f else 1f
             }
-        }.also { addBlockableWidget(it) }
+        }.also {
+            it.setTooltip(Tooltip.create(Component.translatable("gui.cobblenav.tooltip.apply_bucket")))
+            addBlockableWidget(it)
+        }
 
         supportContextMenu = ContextMenuWidget(
             text = listOf(
@@ -217,7 +227,10 @@ class LocationScreen(
                 blockWidgets = true
                 addUnblockableWidget(supportContextMenu)
             }
-        ).also { addBlockableWidget(it) }
+        ).also {
+            it.setTooltip(Tooltip.create(Component.translatable("gui.cobblenav.tooltip.support")))
+            addBlockableWidget(it)
+        }
     }
 
     fun receiveInitData(buckets: List<String>, biome: String) {

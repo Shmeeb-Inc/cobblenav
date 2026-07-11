@@ -10,6 +10,7 @@ import com.metacontent.cobblenav.client.gui.widget.stateful.WidgetState
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractWidget
+import net.minecraft.client.gui.components.Tooltip
 import net.minecraft.network.chat.Component
 import net.minecraft.util.FastColor
 import org.joml.Vector3d
@@ -55,7 +56,10 @@ class OpenedSpawnDataDetail(
         pHeight = BUTTON_HEIGHT,
         action = { checkButtons(statefulWidget.displayer.switchData(-1)) },
         texture = PREV
-    ).also { addWidget(it) }
+    ).also {
+        it.setTooltip(Tooltip.create(Component.translatable("gui.cobblenav.tooltip.prev_detail")))
+        addWidget(it)
+    }
     private val nextButton = IconButton(
         pX = x + (statefulWidget.width - SpawnDataDetailWidget.MENU_WIDTH) / 2 + 75 - BUTTON_WIDTH,
         pY = y + (height - BUTTON_HEIGHT) / 2,
@@ -63,7 +67,10 @@ class OpenedSpawnDataDetail(
         pHeight = BUTTON_HEIGHT,
         action = { checkButtons(statefulWidget.displayer.switchData(1)) },
         texture = NEXT
-    ).also { addWidget(it) }
+    ).also {
+        it.setTooltip(Tooltip.create(Component.translatable("gui.cobblenav.tooltip.next_detail")))
+        addWidget(it)
+    }
 
     init {
         addWidget(statefulWidget.closeButton)

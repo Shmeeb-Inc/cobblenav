@@ -16,6 +16,7 @@ import com.metacontent.cobblenav.client.gui.widget.button.IconButton
 import com.metacontent.cobblenav.spawndata.CheckedSpawnData
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.components.Tooltip
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
@@ -72,7 +73,7 @@ open class SpawnDataWidget(
             }?.id ?: -1
             (Minecraft.getInstance().screen as? PokenavScreen)?.onClose()
         }
-    )
+    ).also { it.setTooltip(Tooltip.create(Component.translatable("gui.cobblenav.tooltip.track"))) }
 
     override fun renderWidget(guiGraphics: GuiGraphics, i: Int, j: Int, delta: Float) {
         val poseStack = guiGraphics.pose()

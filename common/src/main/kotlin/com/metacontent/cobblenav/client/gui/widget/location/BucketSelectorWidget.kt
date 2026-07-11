@@ -9,6 +9,7 @@ import com.metacontent.cobblenav.client.gui.util.gui
 import com.metacontent.cobblenav.client.gui.util.tryTranslating
 import com.metacontent.cobblenav.client.gui.widget.button.IconButton
 import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.components.Tooltip
 import net.minecraft.network.chat.Component
 
 class BucketSelectorWidget(
@@ -34,7 +35,10 @@ class BucketSelectorWidget(
         disabled = parent.bucketIndex <= 0,
         action = { parent.bucketIndex-- },
         texture = PREV
-    ).also { addWidget(it) }
+    ).also {
+        it.setTooltip(Tooltip.create(Component.translatable("gui.cobblenav.tooltip.prev_bucket")))
+        addWidget(it)
+    }
     private val nextButton = IconButton(
         pX = x + WIDTH - BUTTON_WIDTH,
         pY = y + (height - BUTTON_HEIGHT) / 2,
@@ -43,7 +47,10 @@ class BucketSelectorWidget(
         disabled = parent.bucketIndex >= parent.buckets.size - 1,
         action = { parent.bucketIndex++ },
         texture = NEXT
-    ).also { addWidget(it) }
+    ).also {
+        it.setTooltip(Tooltip.create(Component.translatable("gui.cobblenav.tooltip.next_bucket")))
+        addWidget(it)
+    }
 
     override fun renderWidget(guiGraphics: GuiGraphics, i: Int, j: Int, f: Float) {
         prevButton.disabled = parent.bucketIndex <= 0

@@ -9,6 +9,7 @@ import com.metacontent.cobblenav.client.gui.widget.button.PokenavButton
 import com.metacontent.cobblenav.util.cobblenavResource
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.components.Tooltip
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.util.FastColor
@@ -58,7 +59,10 @@ class ContextMenuWidget(
                 pHeight = BUTTON_HEIGHT,
                 texture = ACCEPT,
                 action = { acceptAction.invoke(this, it) }
-            ).also { addWidget(it) }
+            ).also {
+                it.setTooltip(Tooltip.create(Component.translatable("gui.cobblenav.tooltip.confirm")))
+                addWidget(it)
+            }
         }
         cancelButton = IconButton(
             pX = x + width - BUTTON_WIDTH + BUTTON_HORIZONTAL_OFFSET,
@@ -67,7 +71,10 @@ class ContextMenuWidget(
             pHeight = BUTTON_HEIGHT,
             texture = CANCEL,
             action = { cancelAction.invoke(this, it) }
-        ).also { addWidget(it) }
+        ).also {
+            it.setTooltip(Tooltip.create(Component.translatable("gui.cobblenav.tooltip.cancel")))
+            addWidget(it)
+        }
     }
 
     override fun renderWidget(guiGraphics: GuiGraphics, i: Int, j: Int, f: Float) {
