@@ -16,10 +16,13 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.screens.Screen
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner
 import net.minecraft.client.player.LocalPlayer
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.FastColor
+import net.minecraft.util.FormattedCharSequence
+import org.joml.Vector3d
 import org.joml.Vector3f
 
 abstract class PokenavScreen(
@@ -57,6 +60,7 @@ abstract class PokenavScreen(
     private val unblockable = Lists.newArrayList<AbstractWidget>()
     lateinit var notifications: NotificationWidget
     var previousScreen: PokenavScreen? = null
+    private var deferredTooltip: Pair<List<FormattedCharSequence>, ClientTooltipPositioner>? = null
 
     init {
         if (makeOpeningSound) {
@@ -148,6 +152,20 @@ abstract class PokenavScreen(
             renderBaseElement(poseStack, DETAILS)
         }
 
+        //vanilla defers widget tooltips to z 400, which is far below the pokenav frame (z ~6200-7100),
+        //so captured tooltips are drawn here above everything instead. The spawn data detail
+        //panel additionally renders at widget z + 3000 (~8000+), so this must clear that too —
+        //but stay under pose z 10000: the GUI ortho far plane clips anything beyond it
+        //(renderTooltip internally adds another ~400).
+        deferredTooltip?.let { (lines, positioner) ->
+            poseStack.pushAndPop(
+                translate = Vector3d(0.0, 0.0, 9500.0)
+            ) {
+                guiGraphics.renderTooltip(font, lines, positioner, mouseX, mouseY)
+            }
+        }
+        deferredTooltip = null
+
         if (animationOffset > 0f) {
             animationOffset -= ANIMATION_SPEED * delta
             if (animationOffset < 0f) {
@@ -156,6 +174,13 @@ abstract class PokenavScreen(
         }
 //        guiGraphics.fill((width.toFloat() / 2f).toInt() - 1, 0, (width.toFloat() / 2f).toInt() + 1, height, FastColor.ARGB32.color(255, 255, 255, 255))
 //        guiGraphics.fill(0, (height.toFloat() / 2f).toInt() - 1, width, (height.toFloat() / 2f).toInt() + 1, FastColor.ARGB32.color(255, 255, 255, 255))
+    }
+
+    //all setTooltipForNextRenderPass overloads (including widget Tooltips) funnel through this one
+    override fun setTooltipForNextRenderPass(tooltip: List<FormattedCharSequence>, positioner: ClientTooltipPositioner, overrideIfSet: Boolean) {
+        if (deferredTooltip == null || overrideIfSet) {
+            deferredTooltip = tooltip to positioner
+        }
     }
 
     open fun renderOnBackLayer(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, delta: Float) {}

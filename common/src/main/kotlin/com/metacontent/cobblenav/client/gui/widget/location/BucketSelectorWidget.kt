@@ -1,6 +1,5 @@
 package com.metacontent.cobblenav.client.gui.widget.location
 
-import com.cobblemon.mod.common.api.text.onHover
 import com.cobblemon.mod.common.api.text.red
 import com.cobblemon.mod.common.client.gui.summary.widgets.SoundlessWidget
 import com.cobblemon.mod.common.client.render.drawScaledText
@@ -63,7 +62,14 @@ class BucketSelectorWidget(
         )
         val text = pair.second
         if (!pair.first) {
-            text.onHover("$BUCKET_KEY_BASE.$bucketName").red()
+            text.red()
+            // Apex fork: inline hover effects render under the Pokenav frame, so the
+            // missing-translation hint goes through the screen's deferred tooltip pass.
+            val textX1 = x + BUTTON_WIDTH + SPACE
+            val textX2 = x + WIDTH - BUTTON_WIDTH - SPACE
+            if (i in textX1..textX2 && j in y..(y + height)) {
+                parent.setTooltipForNextRenderPass(Component.literal("$BUCKET_KEY_BASE.$bucketName"))
+            }
         }
         drawScaledText(
             context = guiGraphics,
@@ -71,9 +77,7 @@ class BucketSelectorWidget(
             x = x + 1.5 + WIDTH / 2,
             y = y + 4,
             centered = true,
-            maxCharacterWidth = WIDTH - 2 * (BUTTON_WIDTH + SPACE) - 2,
-            pMouseX = i,
-            pMouseY = j
+            maxCharacterWidth = WIDTH - 2 * (BUTTON_WIDTH + SPACE) - 2
         )
         nextButton.render(guiGraphics, i, j, f)
     }

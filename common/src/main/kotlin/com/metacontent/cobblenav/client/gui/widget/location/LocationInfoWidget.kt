@@ -67,12 +67,9 @@ class LocationInfoWidget(
         )
 
         if (ishHovered(i, j) && !checkPair.first) {
-            guiGraphics.renderComponentHoverEffect(
-                Minecraft.getInstance().font,
-                checkPair.second.style,
-                i - 100,
-                j + height + 10
-            )
+            // Apex fork: inline hover effects render under the Pokenav frame, so the
+            // biome id hint goes through the screen's deferred tooltip pass instead.
+            Minecraft.getInstance().screen?.setTooltipForNextRenderPass(Component.literal(biomeResourceLocation.toString()))
         }
     }
 }
