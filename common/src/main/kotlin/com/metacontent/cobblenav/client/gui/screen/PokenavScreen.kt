@@ -15,6 +15,7 @@ import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractWidget
+import net.minecraft.client.gui.components.EditBox
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner
 import net.minecraft.client.player.LocalPlayer
@@ -330,6 +331,19 @@ abstract class PokenavScreen(
 
     fun toPreviousScreen() {
         minecraft?.screen = previousScreen
+    }
+
+    // Apex fork: the inventory key closes the Pokenav like a container screen,
+    // unless a text box is focused.
+    override fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
+        if (super.keyPressed(keyCode, scanCode, modifiers)) {
+            return true
+        }
+        if (focused !is EditBox && minecraft?.options?.keyInventory?.matches(keyCode, scanCode) == true) {
+            onClose()
+            return true
+        }
+        return false
     }
 
     override fun onClose() {
