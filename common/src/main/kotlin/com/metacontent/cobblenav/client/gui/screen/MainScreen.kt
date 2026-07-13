@@ -18,7 +18,8 @@ class MainScreen(
         // Apex fork: no radial menu — the screen closes with ESC.
         StatusBarWidget(
             screenX + WIDTH - VERTICAL_BORDER_DEPTH - StatusBarWidget.WIDTH - 2,
-            screenY + HEIGHT - HORIZONTAL_BORDER_DEPTH - StatusBarWidget.HEIGHT
+            // Apex fork: lifted a few px so it clears the pokedex bezel's inner shadow
+            screenY + HEIGHT - HORIZONTAL_BORDER_DEPTH - StatusBarWidget.HEIGHT - 5
         ).also { addUnblockableWidget(it) }
     }
 

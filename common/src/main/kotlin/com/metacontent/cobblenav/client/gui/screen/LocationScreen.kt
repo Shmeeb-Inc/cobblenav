@@ -112,12 +112,14 @@ class LocationScreen(
         // screen closes with ESC.
         StatusBarWidget(
             screenX + WIDTH - VERTICAL_BORDER_DEPTH - StatusBarWidget.WIDTH - 2,
-            screenY + HEIGHT - HORIZONTAL_BORDER_DEPTH - StatusBarWidget.HEIGHT
+            // Apex fork: lifted a few px so it clears the pokedex bezel's inner shadow
+            screenY + HEIGHT - HORIZONTAL_BORDER_DEPTH - StatusBarWidget.HEIGHT - 5
         ).also { addUnblockableWidget(it) }
 
         sortButton = IconButton(
             pX = viewX + BucketSelectorWidget.WIDTH + BUTTON_BLOCK_SPACE,
-            pY = viewY - (BucketSelectorWidget.HEIGHT + BUTTON_HEIGHT) / 2,
+            // Apex fork: +2 centers the 16px-tall top row in the 20px header band
+            pY = viewY - (BucketSelectorWidget.HEIGHT + BUTTON_HEIGHT) / 2 + 2,
             pWidth = BUTTON_WIDTH,
             pHeight = BUTTON_HEIGHT,
             action = {
@@ -132,7 +134,7 @@ class LocationScreen(
 
         refreshButton = IconButton(
             pX = viewX + BucketSelectorWidget.WIDTH + BUTTON_BLOCK_SPACE + BUTTON_WIDTH + BUTTON_SPACE,
-            pY = viewY - (BucketSelectorWidget.HEIGHT + BUTTON_HEIGHT) / 2,
+            pY = viewY - (BucketSelectorWidget.HEIGHT + BUTTON_HEIGHT) / 2 + 2,
             pWidth = BUTTON_WIDTH,
             pHeight = BUTTON_HEIGHT,
             disabled = true,
@@ -159,7 +161,9 @@ class LocationScreen(
 
         tableView = TableView(
             x = viewX + TABLE_MARGIN,
-            y = viewY + 1,
+            // Apex fork: view_bg's borders moved 4px inward so the header/footer buttons
+            // clear them; the scroll window shifts and shrinks to match.
+            y = viewY + 5,
             width = VIEW_WIDTH - 2 * TABLE_MARGIN,
             columns = 6,
             verticalGap = 4f,
@@ -170,13 +174,13 @@ class LocationScreen(
             viewX + 1,
             tableView.y,
             VIEW_WIDTH - 2,
-            VIEW_HEIGHT - 2,
+            VIEW_HEIGHT - 10,
             child = tableView
         ).also { addBlockableWidget(it) }
 
         checkBox = CheckBox(
             x = viewX + BUTTON_WIDTH + BUTTON_SPACE/*screenX + BUTTON_WIDTH + VERTICAL_BORDER_DEPTH + BACK_BUTTON_SIZE + 2 * BUTTON_SPACE*/,
-            y = viewY + VIEW_HEIGHT + CHECK_BOX_OFFSET/*screenY + HEIGHT - HORIZONTAL_BORDER_DEPTH - BUTTON_HEIGHT + CHECK_BOX_OFFSET*/,
+            y = viewY + VIEW_HEIGHT + CHECK_BOX_OFFSET - 1/*screenY + HEIGHT - HORIZONTAL_BORDER_DEPTH - BUTTON_HEIGHT + CHECK_BOX_OFFSET*/,
             height = CHECK_BOX_SIZE,
             width = CHECK_BOX_SIZE,
             text = Component.translatable("gui.cobblenav.apply_bucket"),
@@ -219,7 +223,7 @@ class LocationScreen(
 
         IconButton(
             pX = viewX/*screenX + VERTICAL_BORDER_DEPTH + BACK_BUTTON_SIZE + BUTTON_SPACE*/,
-            pY = viewY + VIEW_HEIGHT/*screenY + HEIGHT - HORIZONTAL_BORDER_DEPTH - BUTTON_HEIGHT*/,
+            pY = viewY + VIEW_HEIGHT - 1/*screenY + HEIGHT - HORIZONTAL_BORDER_DEPTH - BUTTON_HEIGHT*/,
             pWidth = BUTTON_WIDTH,
             pHeight = BUTTON_HEIGHT,
             texture = SUPPORT,
@@ -237,7 +241,7 @@ class LocationScreen(
         this.buckets = buckets
         this.bucketIndex = CobblenavClient.pokenavSettings?.preferences?.bucketIndex ?: 0
         bucketSelector = BucketSelectorWidget(
-            viewX, viewY - BucketSelectorWidget.HEIGHT,
+            viewX, viewY - BucketSelectorWidget.HEIGHT + 2,
             this
         ).also { addBlockableWidget(it) }
 
