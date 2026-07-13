@@ -32,5 +32,19 @@ tasks {
             expand("version" to project.version)
         }
     }
+
+    remapJar {
+        // inputFile is already wired to the shadow jar by the common convention plugin
+        val clientBuildPath = findProperty("CLIENT_BUILD_PATH") as String?
+        if (clientBuildPath != null) {
+            destinationDirectory.set(
+                file(
+                    clientBuildPath
+                        .replace("/", File.separator)
+                        .replace("%home%", System.getProperty("user.home"))
+                )
+            )
+        }
+    }
 }
 
