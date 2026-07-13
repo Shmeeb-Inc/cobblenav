@@ -42,7 +42,6 @@ abstract class PokenavScreen(
         const val ANIMATION_SPEED = 20f
         const val ANIMATION_OFFSET = 20f
         const val BACK_BUTTON_SIZE = 14
-        val DETAILS = gui("pokenav_details")
         val SCREEN_GLOW = gui("pokenav_screen_glow")
         val BORDERS = gui("pokenav_borders")
         val SCREEN = gui("pokenav_screen")
@@ -149,8 +148,6 @@ abstract class PokenavScreen(
                 green = FastColor.ARGB32.green(color) / 128f,
                 blue = FastColor.ARGB32.blue(color) / 128f,
             )
-            poseStack.translate(0f, 0f, 900f)
-            renderBaseElement(poseStack, DETAILS)
         }
 
         //vanilla defers widget tooltips to z 400, which is far below the pokenav frame (z ~6200-7100),
