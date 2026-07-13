@@ -12,7 +12,8 @@ object OpenPokenavHandler : ClientNetworkPacketHandler<OpenPokenavPacket> {
             CobblenavClient.trackArrowOverlay.tracking = false
         }
         else {
-            client.setScreen(LocationScreen(packet.os, makeOpeningSound = true, animateOpening = true, packet.fixedAreaPoint))
+            // Apex fork: no slide-up opening animation
+            client.setScreen(LocationScreen(packet.os, makeOpeningSound = true, animateOpening = false, packet.fixedAreaPoint))
         }
     }
 }
