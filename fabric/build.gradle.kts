@@ -31,6 +31,11 @@ tasks {
         filesMatching("fabric.mod.json") {
             expand("version" to project.version)
         }
+
+        // Apex fork: bundle the MPL-2.0 license text so the built jar carries it (MPL 3.2)
+        from(rootProject.file("LICENSE.txt")) {
+            rename { "LICENSE-cobblenav.txt" }
+        }
     }
 
     remapJar {
