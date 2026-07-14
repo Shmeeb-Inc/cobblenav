@@ -1,6 +1,7 @@
 package com.metacontent.cobblenav
 
 import com.metacontent.cobblenav.command.CatalogueCommand
+import com.metacontent.cobblenav.command.OpenFishingnavCommand
 import com.metacontent.cobblenav.command.OpenPokenavCommand
 import com.mojang.brigadier.CommandDispatcher
 import net.minecraft.commands.CommandBuildContext
@@ -11,5 +12,6 @@ object CobblenavCommands {
     fun register(dispatcher: CommandDispatcher<CommandSourceStack>, registry: CommandBuildContext, selection: Commands.CommandSelection) {
         CatalogueCommand.register(dispatcher)
         OpenPokenavCommand.register(dispatcher)
+        OpenFishingnavCommand.register(dispatcher)
     }
 }
