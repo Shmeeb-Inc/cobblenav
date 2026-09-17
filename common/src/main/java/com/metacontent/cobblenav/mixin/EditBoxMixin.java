@@ -1,6 +1,6 @@
 package com.metacontent.cobblenav.mixin;
 
-import com.metacontent.cobblenav.client.gui.screen.pokefinder.PokefinderScreen;
+import com.metacontent.cobblenav.client.gui.pokefinder.PokefinderScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
@@ -12,13 +12,11 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(EditBox.class)
 public abstract class EditBoxMixin {
-    @Redirect(
-            method = "renderWidget",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;fill(Lnet/minecraft/client/renderer/RenderType;IIIII)V")
-    )
-    private void drawPokefinderCaret(GuiGraphics instance, RenderType renderType, int i, int j, int k, int l, int m) {
-        Screen screen = Minecraft.getInstance().screen;
-        boolean isPokefinder = screen instanceof PokefinderScreen;
-        instance.fill(renderType, i, j, k, l, isPokefinder ? ((PokefinderScreen) screen).getColor() : m);
-    }
+
+	@Redirect(method = "renderWidget", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;fill(Lnet/minecraft/client/renderer/RenderType;IIIII)V"))
+	private void drawPokefinderCaret(GuiGraphics instance, RenderType renderType, int i, int j, int k, int l, int m) {
+		Screen screen = Minecraft.getInstance().screen;
+		boolean isPokefinder = screen instanceof PokefinderScreen;
+		instance.fill(renderType, i, j, k, l, isPokefinder ? ((PokefinderScreen) screen).getColor() : m);
+	}
 }

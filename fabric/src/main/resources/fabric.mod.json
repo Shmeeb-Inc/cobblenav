@@ -5,6 +5,7 @@
   "name": "Cobblenav",
   "description": "The Cobblenav mod is inspired by the item and related mechanics featured in the games Pokémon RSE and Pokémon ORAS",
   "authors": [
+    "MeAlam",
     "gatekeep06"
   ],
   "contact": {
@@ -15,10 +16,13 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.metacontent.cobblenav.CobblenavFabric"
+      "com.metacontent.cobblenav.CobbleNavFabric"
     ],
     "client": [
       "com.metacontent.cobblenav.client.CobblenavFabricClient"
+    ],
+    "modmenu": [
+      "com.metacontent.cobblenav.client.integration.CobblenavModMenu"
     ]
   },
   "mixins": [
@@ -27,8 +31,16 @@
   "depends": {
     "fabricloader": ">=0.16.5",
     "minecraft": "1.21.1",
-    "cobblemon": ">=1.7.0",
+    "cobblemon": ">=1.8.0",
     "java": ">=21",
     "fabric-api": "*"
+  },
+  "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.curseforge": "https://www.curseforge.com/minecraft/mc-mods/cobblemon-pokenav",
+        "modmenu.modrinth": "https://modrinth.com/mod/cobblemon-pokenav"
+      }
+    }
   }
 }

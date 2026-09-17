@@ -1,0 +1,103 @@
+package com.metacontent.cobblenav.neoforge
+
+import com.metacontent.cobblenav.CobbleNav
+import com.metacontent.cobblenav.CobbleNavCommands
+import com.metacontent.cobblenav.CobbleNavImplementation
+import com.metacontent.cobblenav.CobbleNavItems
+import com.metacontent.cobblenav.CobbleNavLootInjector
+import com.metacontent.cobblenav.neoforge.client.CobblenavNeoForgeClient
+import com.metacontent.cobblenav.utils.I18nUtil.itemGroup
+import com.metacontent.cobblenav.utils.cobblenavResource
+import com.mojang.brigadier.arguments.ArgumentType
+import net.minecraft.commands.synchronization.ArgumentTypeInfo
+import net.minecraft.commands.synchronization.ArgumentTypeInfos
+import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.core.registries.Registries
+import net.minecraft.resources.ResourceKey
+import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.item.CreativeModeTab
+import net.minecraft.world.item.ItemStack
+import net.neoforged.api.distmarker.Dist
+import net.neoforged.fml.common.Mod
+import net.neoforged.fml.loading.FMLEnvironment
+import net.neoforged.neoforge.common.NeoForge
+import net.neoforged.neoforge.event.LootTableLoadEvent
+import net.neoforged.neoforge.event.RegisterCommandsEvent
+import net.neoforged.neoforge.event.village.WandererTradesEvent
+import net.neoforged.neoforge.registries.DeferredRegister
+import net.neoforged.neoforge.registries.RegisterEvent
+import thedarkcolour.kotlinforforge.neoforge.forge.MOD_BUS
+import kotlin.reflect.KClass
+
+@Mod(CobbleNav.MOD_ID)
+class CobbleNavNeoForge : CobbleNavImplementation {
+	private val commandArgumentTypes = DeferredRegister.create(Registries.COMMAND_ARGUMENT_TYPE, CobbleNav.MOD_ID)
+	override val networkManager = CobblenavNeoForgeNetworkManager
+
+	init {
+		with(MOD_BUS) {
+			this@CobbleNavNeoForge.commandArgumentTypes.register(this)
+			CobbleNav.init(this@CobbleNavNeoForge)
+			addListener(networkManager::registerMessages)
+		}
+		with(NeoForge.EVENT_BUS) {
+			addListener(::onWanderingTraderRegistry)
+		}
+		if (FMLEnvironment.dist == Dist.CLIENT) {
+			CobblenavNeoForgeClient.init()
+		}
+	}
+
+	override fun registerItems() {
+		with(MOD_BUS) {
+			addListener<RegisterEvent> { event ->
+				event.register(CobbleNavItems.resourceKey) { helper ->
+					CobbleNavItems.register { resourceLocation, item -> helper.register(resourceLocation, item) }
+				}
+			}
+			addListener<RegisterEvent> { event ->
+				event.register(Registries.CREATIVE_MODE_TAB) { helper ->
+					helper.register(
+						ResourceKey.create(BuiltInRegistries.CREATIVE_MODE_TAB.key(), cobblenavResource("cobblenav")),
+						CreativeModeTab
+							.builder()
+							.title(itemGroup("general"))
+							.icon { ItemStack(CobbleNavItems.POKENAV) }
+							.displayItems(CobbleNavItems::addToGroup)
+							.build(),
+					)
+				}
+			}
+		}
+	}
+
+	override fun registerCommands() {
+		with(NeoForge.EVENT_BUS) {
+			addListener<RegisterCommandsEvent> { event ->
+				CobbleNavCommands.register(event.dispatcher, event.buildContext, event.commandSelection)
+			}
+		}
+	}
+
+	override fun <A : ArgumentType<*>, T : ArgumentTypeInfo.Template<A>> registerCommandArgument(
+		identifier: ResourceLocation,
+		argumentClass: KClass<A>,
+		serializer: ArgumentTypeInfo<A, T>,
+	) {
+		commandArgumentTypes.register(identifier.path) { _ ->
+			ArgumentTypeInfos.registerByClass(argumentClass.java, serializer)
+		}
+	}
+
+	override fun injectLootTables() {
+		with(NeoForge.EVENT_BUS) {
+			addListener<LootTableLoadEvent> { event ->
+				CobbleNavLootInjector.inject(event.name) { builder -> event.table.addPool(builder.build()) }
+			}
+		}
+	}
+
+	fun onWanderingTraderRegistry(event: WandererTradesEvent) {
+		event.rareTrades.addAll(CobbleNav.resolveWandererTrades())
+	}
+}

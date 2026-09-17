@@ -2,7 +2,7 @@ package com.metacontent.cobblenav.storage
 
 import com.cobblemon.mod.common.api.storage.player.InstancedPlayerData
 import com.cobblemon.mod.common.api.storage.player.PlayerInstancedDataFactory
-import com.metacontent.cobblenav.Cobblenav
+import com.metacontent.cobblenav.CobbleNav
 import net.minecraft.server.level.ServerPlayer
 
 /**
@@ -12,11 +12,11 @@ import net.minecraft.server.level.ServerPlayer
  * would disconnect players whose client lacks this mod.
  */
 class ClientGatedPlayerDataFactory<T : InstancedPlayerData>(
-    private val delegate: PlayerInstancedDataFactory<T>
+	private val delegate: PlayerInstancedDataFactory<T>,
 ) : PlayerInstancedDataFactory<T> by delegate {
-    override fun sendToPlayer(player: ServerPlayer) {
-        if (Cobblenav.hasClientMod(player)) {
-            delegate.sendToPlayer(player)
-        }
-    }
+	override fun sendToPlayer(player: ServerPlayer) {
+		if (CobbleNav.hasClientMod(player)) {
+			delegate.sendToPlayer(player)
+		}
+	}
 }

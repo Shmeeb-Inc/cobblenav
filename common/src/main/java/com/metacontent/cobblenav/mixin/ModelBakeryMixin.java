@@ -1,5 +1,6 @@
 package com.metacontent.cobblenav.mixin;
 
+import java.util.Map;
 import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
@@ -11,21 +12,20 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.Map;
-
 @Mixin(ModelBakery.class)
 public abstract class ModelBakeryMixin {
-    @Shadow
-    protected abstract void loadSpecialItemModelAndDependencies(ModelResourceLocation arg);
 
-    @Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/resources/model/ModelBakery;loadSpecialItemModelAndDependencies(Lnet/minecraft/client/resources/model/ModelResourceLocation;)V", ordinal = 0))
-    private void injectInit(BlockColors blockColors, ProfilerFiller profilerFiller, Map map, Map map2, CallbackInfo ci) {
-        // Apex fork: must not touch CobblenavItems. Its static init constructs Item
-        // instances, which create intrusive registry holders — illegal after the item
-        // registry freezes (this mixin runs during resource reload), and the fork never
-        // registers the items. The in-hand/flicker/opened models are unused without the
-        // items; only the track arrow model is still needed (TrackArrowOverlay renders
-        // it directly by model location).
-        this.loadSpecialItemModelAndDependencies(ModelResourceLocation.inventory(ResourceLocation.fromNamespaceAndPath("cobblenav", "track_arrow")));
-    }
+	@Shadow
+	protected abstract void loadSpecialItemModelAndDependencies(ModelResourceLocation arg);
+
+	@Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/resources/model/ModelBakery;loadSpecialItemModelAndDependencies(Lnet/minecraft/client/resources/model/ModelResourceLocation;)V", ordinal = 0))
+	private void injectInit(BlockColors blockColors, ProfilerFiller profilerFiller, Map map, Map map2, CallbackInfo ci) {
+		// Apex fork: must not touch CobbleNavItems. Its static init constructs Item
+		// instances, which create intrusive registry holders. That is illegal after the
+		// item registry freezes (this mixin runs during resource reload), and the fork
+		// never registers the items. The in-hand/flicker/opened models are unused without
+		// the items; only the track arrow model is still needed (TrackArrowOverlay renders
+		// it directly by model location).
+		this.loadSpecialItemModelAndDependencies(ModelResourceLocation.inventory(ResourceLocation.fromNamespaceAndPath("cobblenav", "track_arrow")));
+	}
 }

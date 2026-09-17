@@ -2,47 +2,35 @@ package com.metacontent.cobblenav.client.settings.pokefinder.filter
 
 import com.cobblemon.mod.common.api.pokemon.PokemonProperties
 import com.cobblemon.mod.common.pokemon.Pokemon
-import com.metacontent.cobblenav.Cobblenav
 import com.metacontent.cobblenav.client.CobblenavClient
-import com.metacontent.cobblenav.client.settings.pokefinder.filter.EditableTextFilter
+import com.metacontent.cobblenav.utils.cobblenavResource
+import com.metacontent.cobblenav.utils.extensions.matchesOnClient
+import net.minecraft.resources.ResourceLocation
 
-class PokemonPropertiesFilter(
-    private var properties: PokemonProperties = PokemonProperties()
-) : EditableTextFilter() {
-    companion object {
-        const val TYPE = "properties"
-    }
+class PokemonPropertiesFilter(private var properties: PokemonProperties = PokemonProperties()) : EditableTextFilter() {
+	companion object {
+		val TYPE: ResourceLocation = cobblenavResource("properties")
+	}
 
-    override val type = "properties"
+	override val type = TYPE
 
-    override fun test(pokemon: Pokemon): Boolean = properties.test(pokemon)
+	override fun test(pokemon: Pokemon): Boolean {
+		val result = properties.matchesOnClient(pokemon)
+		return result
+	}
 
-    private fun PokemonProperties.test(pokemon: Pokemon): Boolean {
-        return if (level != null && pokemon.level != level) {
-            false
-        } else if (shiny != null && pokemon.shiny != shiny) {
-            false
-        } else if (gender != null && pokemon.gender != gender) {
-            false
-        } else if (species != null && !pokemon.species.name.equals(species, true)) {
-            false
-        } else if (form != null && !pokemon.form.name.equals(form, true)) {
-            false
-        } else if (type != null && pokemon.types.none { it.name.equals(type, true) }) {
-            false
-        } else if (scaleModifier != null && pokemon.scaleModifier != scaleModifier) {
-            false
-        } else if (!pokemon.aspects.containsAll(aspects)) {
-            false
-        } else {
-            true
-        }
-    }
+	override fun update(value: String) {
+		try {
+			properties = if (value.isBlank()) {
+				PokemonProperties()
+			} else {
+				PokemonProperties.parse(value)
+			}
+		} catch (_: Exception) {
+		}
 
-    override fun update(value: String) {
-        properties = PokemonProperties.parse(value)
-        CobblenavClient.pokefinderSettings?.changed = true
-    }
+		CobblenavClient.pokefinderSettings?.changed = true
+	}
 
-    override fun asString(): String = properties.originalString
+	override fun asString(): String = properties.originalString
 }
