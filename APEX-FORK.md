@@ -75,6 +75,12 @@ style so the diff stays quiet. After merging, check:
 ./gradlew :fabric:remapJar
 ```
 
+The fork's wrapper is on Gradle 9.4, so the shadow plugin is the maintained
+`com.gradleup.shadow` (upstream still pins `com.github.johnrengelman.shadow`
+8.1.1 on Gradle 8.14, which fails at `shadowJar` under Gradle 9). Expect a
+trivial conflict in those three plugin lines on each merge; keep the gradleup
+side.
+
 The jar lands in `fabric/build/libs/cobblenav-fabric-<version>.jar` (or in
 `CLIENT_BUILD_PATH` when that Gradle property is set, e.g. in
 `~/.gradle/gradle.properties`) and goes in the mods folder on both the server

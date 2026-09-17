@@ -18,7 +18,7 @@ kotlinforforge = "5.10.0"
 # Plugins
 architectury-loom = "1.11-SNAPSHOT"
 architectury-plugin = "3.4-SNAPSHOT"
-shadow = "8.1.1"
+shadow = "9.6.1"
 kotlin = "2.2.20"
 spotless = "8.2.0"
 
@@ -40,7 +40,7 @@ neoforge-kotlin = { module = "thedarkcolour:kotlinforforge-neoforge", version.re
 neoforge-cobblemon = { module = "com.cobblemon:neoforge", version.ref = "cobblemon" }
 
 # Plugins
-shadow = { module = "com.github.johnrengelman:shadow", version.ref = "shadow" }
+shadow = { module = "com.gradleup.shadow:shadow-gradle-plugin", version.ref = "shadow" }
 kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 spotless-gradle = { module = "com.diffplug.spotless:spotless-plugin-gradle", version.ref = "spotless" }
 loom = { group = "dev.architectury", name = "architectury-loom", version.ref = "architectury-loom" }

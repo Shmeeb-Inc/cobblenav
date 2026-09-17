@@ -41,7 +41,9 @@ object SpawnDataHelper {
 	val spawnDetailIds = mutableSetOf<String>()
 	val spawnDetailIdBySpecies = mutableMapOf<String, MutableList<String>>()
 
-	fun calculateWeightedBuckets(bucketWeights: MutableMap<String, Float>, influences: List<SpawningInfluence>): List<WeightedBucket> {
+	fun calculateWeightedBuckets(baseBucketWeights: Map<String, Float>, influences: List<SpawningInfluence>): List<WeightedBucket> {
+		// Influences edit the map in place, and callers pass Cobblemon's live config maps
+		val bucketWeights = baseBucketWeights.toMutableMap()
 		influences.forEach { it.affectBucketWeights(bucketWeights) }
 		val sum = bucketWeights.values.sum()
 		return bucketWeights.map { (key, value) -> WeightedBucket(key, value / sum) }
