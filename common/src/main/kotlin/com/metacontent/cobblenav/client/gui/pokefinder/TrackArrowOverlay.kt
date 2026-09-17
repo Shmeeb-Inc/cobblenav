@@ -24,6 +24,7 @@ import kotlin.math.sqrt
 class TrackArrowOverlay : Gui(Minecraft.getInstance()) {
 	private val minecraft = Minecraft.getInstance()
 	private val offset = CobblenavClient.config.trackArrowYOffset
+
 	// Apex fork: must not touch CobbleNavItems (constructing its unregistered items
 	// creates intrusive registry holders, which throws after the registry freezes).
 	// The arrow model is baked by ModelBakeryMixin and rendered by location, with a
