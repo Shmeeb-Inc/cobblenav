@@ -14,12 +14,17 @@ object I18nUtil {
 	private fun prefixed(key: String, prefix: String, vararg args: Any) =
 		translatable(cobblenavResource(key).toLanguageKey(prefix), *args)
 
+	private fun prefixed(id: RL, prefix: String, vararg args: Any) =
+		translatable(id.toLanguageKey(prefix), *args)
+
 	fun withPrefix(prefix: String, key: String, vararg args: Any): MC =
 		translatable("$prefix.${CobbleNav.MOD_ID}.$key", *args)
 
 	fun tag(key: String, vararg args: Any): MutableComponent = prefixed(key, "tag", *args)
 
 	fun item(key: String, vararg args: Any): MutableComponent = prefixed(key, "item", *args)
+
+	fun item(id: RL, vararg args: Any): MutableComponent = prefixed(id, "item", *args)
 
 	fun gui(key: String, vararg args: Any): MutableComponent = prefixed(key, "gui", *args)
 

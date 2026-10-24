@@ -25,7 +25,7 @@ class BaitCollector : ConditionCollector<FishingSpawningCondition>() {
 	): List<MutableComponent>? =
 		condition.bait?.let { resourceLocation ->
 			SpawnBaitEffects.getFromIdentifier(resourceLocation)?.item?.toResourceLocation()?.let {
-				listOf(item(it.toString()))
+				listOf(item(it))
 			}
 		}
 }

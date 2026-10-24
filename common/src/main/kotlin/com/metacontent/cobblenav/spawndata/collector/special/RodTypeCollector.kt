@@ -24,7 +24,7 @@ class RodTypeCollector : ConditionCollector<FishingSpawningCondition>() {
 	): List<MutableComponent>? =
 		condition.rodType?.let { resourceLocation ->
 			PokeRods.getPokeRod(resourceLocation)?.pokeBallId?.let {
-				listOf(item(it.toString()))
+				listOf(item(it))
 			}
 		}
 }

@@ -23,6 +23,6 @@ class RodCollector : ConditionCollector<FishingSpawningCondition>() {
 		player: ServerPlayer,
 	): List<MutableComponent>? =
 		condition.rod?.toResourceLocation()?.let {
-			listOf(item(it.toString()))
+			listOf(item(it))
 		}
 }
